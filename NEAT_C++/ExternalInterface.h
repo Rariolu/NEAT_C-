@@ -2,6 +2,7 @@
 #define _EXTERNAL_INTERFACE_H
 
 #include "URGH.h"
+#include "XML_Formatting.h"
 
 extern "C"
 {
@@ -13,7 +14,7 @@ extern "C"
 	EXTERN_TEMPLATE void SaveGenome(int id, char* filepath);
 	EXTERN_TEMPLATE bool ParseGenome(char* filepath);
 	EXTERN_TEMPLATE void RemoveGenome(int id);
-	EXTERN_TEMPLATE double GetOutputFromGenome(int genome, int inputcount, double* inputs, int outputnum);
+	EXTERN_TEMPLATE double GetOutputFromGenome(int genome, int inputcount, double inputs[], int outputnum);
 	EXTERN_TEMPLATE void ResetMemory(int genomeid);
 	EXTERN_TEMPLATE void RemoveGenome(int id);
 	EXTERN_TEMPLATE void Mutate(int genomeid, int iterations);

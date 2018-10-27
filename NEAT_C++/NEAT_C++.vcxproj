@@ -110,15 +110,37 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CSRand.h" />
+    <ClInclude Include="DoubleWrapper.h" />
     <ClInclude Include="ExternalInterface.h" />
     <ClInclude Include="Genome.h" />
     <ClInclude Include="GenomeManager.h" />
+    <ClInclude Include="GoldenNode.h" />
+    <ClInclude Include="InputMemoryNode.h" />
+    <ClInclude Include="InputNode.h" />
+    <ClInclude Include="IntWrapper.h" />
+    <ClInclude Include="MemoryPresentNode.h" />
+    <ClInclude Include="Node.h" />
+    <ClInclude Include="Operations.h" />
+    <ClInclude Include="OutputMemoryNode.h" />
+    <ClInclude Include="OutputNode.h" />
     <ClInclude Include="URGH.h" />
+    <ClInclude Include="XML_Formatting.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CSRand.cpp" />
     <ClCompile Include="ExternalInterface.cpp" />
     <ClCompile Include="Genome.cpp" />
     <ClCompile Include="GenomeManager.cpp" />
+    <ClCompile Include="GoldenNode.cpp" />
+    <ClCompile Include="InputMemoryNode.cpp" />
+    <ClCompile Include="InputNode.cpp" />
+    <ClCompile Include="MemoryPresentNode.cpp" />
+    <ClCompile Include="Node.cpp" />
+    <ClCompile Include="Operations.cpp" />
+    <ClCompile Include="OutputMemoryNode.cpp" />
+    <ClCompile Include="OutputNode.cpp" />
+    <ClCompile Include="XML_Formatting.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
