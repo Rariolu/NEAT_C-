@@ -142,6 +142,9 @@
     <ClCompile Include="OutputNode.cpp" />
     <ClCompile Include="XML_Formatting.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="ExampleGenome.xml" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

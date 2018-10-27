@@ -127,7 +127,17 @@ std::string XML_Formatting::ConvertGenomeToXML(Genome* genome)
 		int id = gn->GetNodeID();
 		Operator op = gn->GetOperator();
 		std::vector<Node::Link*> maininputs = gn->GetMainInputs();
-		content += "\t\t<gold id=\""+std::to_string(id)+"\" operation";
+		content += "\t\t<gold id=\""+std::to_string(id)+"\" operation=\""+GoldenNode::GetOpString(op)+"\"";
+		for (int j = 0; j < maininputs.size(); j++)
+		{
+			int inpid = maininputs[j]->GetSource()->GetNodeID();
+			content += " input"+std::to_string(j+1)+"=\""+std::to_string(inpid)+"\"";
+		}
+		if (op == CONSTANT)
+		{
+			content += " constant=\"" + std::to_string(gn->ConstValue());
+		}
+		content += "/>\n";
 	}
 
 	content += "\t" + goldennodesclosetag + "\n";
@@ -274,12 +284,22 @@ Genome* XML_Formatting::ParseGenomeDirect(std::string content)
 	int outputcount;
 	int ltmemcount;
 	int stmemcount;
-	int memorypresent;
+	//int memorypresent;
 	std::string line;
 	std::stack<std::string>* elements = new std::stack<std::string>();
 	std::istringstream stream(content);
-
-	std::vector<std::pair<int,int>> links;
+	std::map<int, Node*> nodemap;
+	std::vector<Node*> nodes;
+	std::vector<InputNode*> inputnodes;
+	std::vector<Node*> intermediatenodes;
+	std::vector<OutputNode*> outputnodes;
+	std::vector<InputMemoryNode*> ltinputmemnodes;
+	std::vector<OutputMemoryNode*> ltoutputmemnodes;
+	std::vector<InputMemoryNode*> stinputmemnodes;
+	std::vector<OutputMemoryNode*> stoutputmemnodes;
+	std::vector<GoldenNode*> goldennodes;
+	MemoryPresentNode* memorypresentnode;
+	std::vector<std::pair<std::pair<int,int>,double>> links;
 	while (std::getline(stream, line))
 	{
 		if (!IsTag(line, elements))
@@ -288,15 +308,102 @@ Genome* XML_Formatting::ParseGenomeDirect(std::string content)
 			{
 				if (elements->top() == genomeopentag)
 				{
-
+					if (Operations::Contains(line, "<ID>"))
+					{
+						std::string num = Operations::GetTextBetween(line, "<ID>", "</ID>");
+						IntWrapper* n = new IntWrapper();
+						if (Operations::TryParse(num, n))
+						{
+							id = n->Number;
+							idset = true;
+						}
+					}
+					if (Operations::Contains(line, "<InputCount>"))
+					{
+						std::string inpcount = Operations::GetTextBetween(line, "<InputCount>", "</InputCount>");
+						IntWrapper* n = new IntWrapper();
+						if (Operations::TryParse(inpcount, n))
+						{
+							inputcount = n->Number;
+							inputcountset = true;
+						}
+						n->~IntWrapper();
+					}
+					if (Operations::Contains(line, "<OutputCount>"))
+					{
+						std::string outcount = Operations::GetTextBetween(line, "<OutputCount>", "</OutputCount>");
+						IntWrapper* n = new IntWrapper();
+						if (Operations::TryParse(outcount, n))
+						{
+							outputcount = n->Number;
+							outputcountset = true;
+						}
+						n->~IntWrapper();
+					}
+					if (Operations::Contains(line, "<STMemoryCount>"))
+					{
+						std::string memcount = Operations::GetTextBetween(line, "<STMemoryCount>", "</STMemoryCount>");
+						IntWrapper* n = new IntWrapper();
+						if (Operations::TryParse(memcount, n))
+						{
+							stmemcount = n->Number;
+							stmemcountset = true;
+						}
+						n->~IntWrapper();
+					}
+					if (Operations::Contains(line, "<LTMemoryCount>"))
+					{
+						std::string ltmemcount = Operations::GetTextBetween(line, "<LTMemoryCount>", "</LTMemoryCount>");
+						IntWrapper* n = new IntWrapper();
+						if (Operations::TryParse(ltmemcount, n))
+						{
+							ltmemcount = n->Number;
+							ltmemcountset = true;
+						}
+					}
+					if (Operations::Contains(line, "<MemoryPresentNode>"))
+					{
+						std::string memorypresentid = Operations::GetTextBetween(line, "<MemoryPresentNode>", "</MemoryPresentNode>");
+						IntWrapper* n = new IntWrapper();
+						if (Operations::TryParse(memorypresentid, n))
+						{
+							memorypresentnode = new MemoryPresentNode(stmemcount > 0, n->Number);
+							//memorypresent = n->Number;
+							memorypresentset = true;
+						}
+						n->~IntWrapper();
+					}
 				}
 				else if (elements->top() == inputsopentag)
 				{
-
+					if (Operations::Contains(line, "<input id"))
+					{
+						std::string inpid = Operations::GetTextBetween(line, "id=\"", "\" inp");
+						IntWrapper* n = new IntWrapper();
+						if (Operations::TryParse(inpid, n))
+						{
+							std::string inpindex = Operations::GetTextBetween(line, "inpindex=\"", "\"/>");
+							IntWrapper* nn = new IntWrapper();
+							if (Operations::TryParse(inpindex, nn))
+							{
+								InputNode* inp = new InputNode(nn->Number, n->Number);
+								nodemap.insert(std::make_pair(n->Number, inp));
+							}
+						}
+					}
 				}
 				else if (elements->top() == intermediatesopentag)
 				{
+					if (Operations::Contains(line, "<intermediate"))
+					{
+						std::string intid = Operations::GetTextBetween(line, "id=\"", "\" distance");
+						IntWrapper* n = new IntWrapper();
+						if (Operations::TryParse(intid,n))
+						{
+							std::string dist = Operations::GetTextBetween(line, "distance=\"", "\"/>");
 
+						}
+					}
 				}
 				else if (elements->top() == outputsopentag)
 				{
@@ -321,5 +428,11 @@ Genome* XML_Formatting::ParseGenomeDirect(std::string content)
 			}
 		}
 	}
-	return genome;
+	if (idset && inputcountset && outputcountset && ltmemcountset && stmemcountset)
+	{
+		genome = new Genome(inputcount, outputcount, ltmemcount, stmemcount, id);
+		genome->SetNodes(nodes, inputnodes, outputnodes, intermediatenodes, ltinputmemnodes, ltoutputmemnodes, stinputmemnodes, stoutputmemnodes, goldennodes, memorypresentnode);
+		return genome;
+	}
+	return NULL;
 }

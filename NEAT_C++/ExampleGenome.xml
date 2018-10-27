@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<genome>
+  <ID>0</ID>
+  <InputCount>3</InputCount>
+  <OutputCount>2</OutputCount>
+  <STMemoryCount>3</STMemoryCount>
+  <LTMemoryCount>3</LTMemoryCount>
+  <MemoryPresentNode>6</MemoryPresentNode>
+  <inputs>
+    <input id="0" inpindex="0"/>
+    <input id="1" inpindex="1"/>
+    <input id="2" inpindex="2"/>
+  </inputs>
+  <intermediates>
+    <intermediate id="19" distance="50"/>
+  </intermediates>
+  <outputs>
+    <output id="3"/>
+    <output id="4"/>
+  </outputs>
+  <stmemory>
+    <memory input="7" output="10"/>
+    <memory input="8" output="11"/>
+    <memory input="9" output="12"/>
+  </stmemory>
+  <ltmemory>
+    <memory input="13" output="16" value="7"/>
+    <memory input="14" output="17" value="7"/>
+    <memory input="15" output="18" value="7"/>
+  </ltmemory>
+  <goldennodes>
+    <gold id="20" operation="ADD" input1="21" input2="22"/>
+    <gold id="21" operation="CONSTANT" constant="14"/>
+    <gold id="22" operation="CONSTANT" constant="7"/>
+  </goldennodes>
+  <links>
+    
+  </links>
+</genome>

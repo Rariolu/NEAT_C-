@@ -67,6 +67,7 @@ Node* GoldenNode::GetClone()
 	{
 		_clone = new GoldenNode(_operator, GetNodeID());
 		GetGoldenClone()->SetMainInputs(_mainInputs);
+		GetGoldenClone()->SetConstValue(_constValue);
 	}
 	return _clone;
 }
