@@ -29,11 +29,25 @@
     <memory input="15" output="18" value="7"/>
   </ltmemory>
   <goldennodes>
-    <gold id="20" operation="ADD" input1="21" input2="22"/>
+    <gold id="20" operation="ADD" input1="21" input2="22" distance=""/>
     <gold id="21" operation="CONSTANT" constant="14"/>
     <gold id="22" operation="CONSTANT" constant="7"/>
   </goldennodes>
   <links>
-    
+    <link source="0" destination="19" weight="5"/>
+    <link source="1" destination="19" weight="7.6"/>
+    <link source="2" destination="19" weight="0.95"/>
+    <link source="7" destination="19" weight="5.34"/>
+    <link source="8" destination="19" weight="93.45"/>
+    <link source="9" destination="19" weight="3"/>
+    <link source="13" destination="19" weight="4"/>
+    <link source="14" destination="19" weight="55"/>
+    <link source="15" destination="19" weight="4.3"/>
+    <link source="21" destination="20" weight="1"/>
+    <link source="22" destination="20" weight="1"/>
+    <link source="20" destination="3" weight="4.67"/>
+    <link source="20" destination="4" weight="34"/>
+    <link source="19" destination="3" weight="34.4"/>
+    <link source="19" destination="4" weight="0.01"/>
   </links>
 </genome>

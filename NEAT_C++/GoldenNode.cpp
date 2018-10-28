@@ -39,8 +39,10 @@ double GoldenNode::GetValue(double inputs[])
 	std::vector<double> params;
 	for (int i = 0; i < paramcount && _mainInputs.size() > 0; i++)
 	{
-		double inp = _mainInputs[i%_mainInputs.size()]->GetSource()->GetNodeValue(inputs);
-		double rNorm = Operations::ReverseNormalise(inp);
+		Link* link = _mainInputs[i%_mainInputs.size()];
+		double inp = link->GetSource()->GetNodeValue(inputs);
+		double weight = link->GetWeight();
+		double rNorm = Operations::ReverseNormalise(inp*weight);
 		params.push_back(rNorm);
 	}
 	double mult = GetInputs().size() > paramcount ? Node::GetNodeValue(inputs) : 1;

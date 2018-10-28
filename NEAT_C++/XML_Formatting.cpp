@@ -371,7 +371,7 @@ Genome* XML_Formatting::ParseGenomeDirect(std::string content)
 							//memorypresent = n->Number;
 							memorypresentset = true;
 						}
-						n->~IntWrapper();
+						delete n;
 					}
 				}
 				else if (elements->top() == inputsopentag)
@@ -387,6 +387,8 @@ Genome* XML_Formatting::ParseGenomeDirect(std::string content)
 							if (Operations::TryParse(inpindex, nn))
 							{
 								InputNode* inp = new InputNode(nn->Number, n->Number);
+								nodes.push_back(inp);
+								inputnodes.push_back(inp);
 								nodemap.insert(std::make_pair(n->Number, inp));
 							}
 						}
@@ -423,7 +425,33 @@ Genome* XML_Formatting::ParseGenomeDirect(std::string content)
 				}
 				else if (elements->top() == linksopentag)
 				{
-
+					if (Operations::Contains(line, "<link"))
+					{
+						std::string source = Operations::GetTextBetween(line, "<link source=\"", "\" dest");
+						IntWrapper* s = new IntWrapper();
+						if (Operations::TryParse(source, s))
+						{
+							std::string destination = Operations::GetTextBetween(line, "destination=\"", "\" weight");
+							IntWrapper* d = new IntWrapper();
+							if (Operations::TryParse(destination, d))
+							{
+								std::string weight = Operations::GetTextBetween(line, "weight=\"", "\"/>");
+								DoubleWrapper* w = new DoubleWrapper();
+								if (Operations::DoubleTryParse(weight, w))
+								{
+									std::map<int, Node*>::iterator _s = nodemap.find(s->Number);
+									std::map<int, Node*>::iterator _d = nodemap.find(d->Number);
+									if (_s != nodemap.end() && _d != nodemap.end())
+									{
+										_s->second->AddOutput(_d->second);
+									}
+								}
+								delete w;
+							}
+							delete d;
+						}
+						delete s;
+					}
 				}
 			}
 		}
