@@ -80,6 +80,7 @@ class Node
 		virtual Node* GetClone();
 		void RandomiseDistance();
 		void RandomiseDistance(double min, double max);
+		virtual bool IsGold() { return false; }
 	protected:
 		double Memorise(double value);
 		static int nodenum;

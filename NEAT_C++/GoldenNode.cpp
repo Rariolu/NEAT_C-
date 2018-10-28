@@ -79,6 +79,11 @@ GoldenNode* GoldenNode::GetGoldenClone()
 	return (GoldenNode*)GetClone();
 }
 
+void GoldenNode::AddMainInput(Link* input)
+{
+	_mainInputs.push_back(input);
+}
+
 void GoldenNode::SetMainInputs(std::vector<Link*> mainInputs)
 {
 	_mainInputs = mainInputs;

@@ -137,6 +137,7 @@ std::string XML_Formatting::ConvertGenomeToXML(Genome* genome)
 		{
 			content += " constant=\"" + std::to_string(gn->ConstValue());
 		}
+		content += " distance=\"" + std::to_string(gn->GetDistance());
 		content += "/>\n";
 	}
 
@@ -299,7 +300,7 @@ Genome* XML_Formatting::ParseGenomeDirect(std::string content)
 	std::vector<OutputMemoryNode*> stoutputmemnodes;
 	std::vector<GoldenNode*> goldennodes;
 	MemoryPresentNode* memorypresentnode;
-	std::vector<std::pair<std::pair<int,int>,double>> links;
+	std::vector<std::pair<int,int>> goldlinks;
 	while (std::getline(stream, line))
 	{
 		if (!IsTag(line, elements))
@@ -391,7 +392,9 @@ Genome* XML_Formatting::ParseGenomeDirect(std::string content)
 								inputnodes.push_back(inp);
 								nodemap.insert(std::make_pair(n->Number, inp));
 							}
+							delete nn;
 						}
+						delete n;
 					}
 				}
 				else if (elements->top() == intermediatesopentag)
@@ -403,8 +406,18 @@ Genome* XML_Formatting::ParseGenomeDirect(std::string content)
 						if (Operations::TryParse(intid,n))
 						{
 							std::string dist = Operations::GetTextBetween(line, "distance=\"", "\"/>");
-
+							DoubleWrapper* d = new DoubleWrapper();
+							if (Operations::DoubleTryParse(dist, d))
+							{
+								Node* node = new Node(n->Number);
+								node->SetDistance(d->Number);
+								nodes.push_back(node);
+								intermediatenodes.push_back(node);
+								nodemap.insert(std::make_pair(n->Number, node));
+							}
+							delete d;
 						}
+						delete n;
 					}
 				}
 				else if (elements->top() == outputsopentag)
@@ -443,7 +456,18 @@ Genome* XML_Formatting::ParseGenomeDirect(std::string content)
 									std::map<int, Node*>::iterator _d = nodemap.find(d->Number);
 									if (_s != nodemap.end() && _d != nodemap.end())
 									{
-										_s->second->AddOutput(_d->second);
+										Node::Link* link = new Node::Link(_s->second, _d->second, w->Number);
+										_s->second->AddOutput(link);
+										_d->second->AddInput(link);
+										if (_d->second->IsGold())
+										{
+											std::pair<int, int> goldlink = std::make_pair(_s->second->GetNodeID(), _d->second->GetNodeID());
+											std::vector<std::pair<int, int>>::iterator iter = std::find(goldlinks.begin(), goldlinks.end(), goldlink);
+											if (iter != goldlinks.end())
+											{
+												((GoldenNode*)_d->second)->AddMainInput(link);
+											}
+										}
 									}
 								}
 								delete w;

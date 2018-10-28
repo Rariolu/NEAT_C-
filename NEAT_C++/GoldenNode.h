@@ -22,12 +22,14 @@ class GoldenNode : public Node
 		double GetValue(double inputs[]);
 		Node* GetClone();
 		GoldenNode* GetGoldenClone();
+		void AddMainInput(Link* input);
 		void SetMainInputs(std::vector<Link*> mainInputs);
 		std::vector<Link*> GetMainInputs();
 		Operator GetOperator();
 		double ConstValue();
 		void SetConstValue(double val);
 		static std::string GetOpString(Operator op);
+		bool IsGold() { return true; }
 	private:
 		static int GetParameterCount(Operator op);
 		Operator _operator;

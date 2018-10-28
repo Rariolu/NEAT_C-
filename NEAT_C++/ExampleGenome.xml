@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--Formatting is very specific, XML parser is pretty
+basic and only works on what's -->
 <genome>
   <ID>0</ID>
   <InputCount>3</InputCount>
@@ -29,9 +31,9 @@
     <memory input="15" output="18" value="7"/>
   </ltmemory>
   <goldennodes>
-    <gold id="20" operation="ADD" input1="21" input2="22" distance=""/>
-    <gold id="21" operation="CONSTANT" constant="14"/>
-    <gold id="22" operation="CONSTANT" constant="7"/>
+    <gold id="20" operation="ADD" input1="21" input2="22" distance="40"/>
+    <gold id="21" operation="CONSTANT" constant="14" distance="39"/>
+    <gold id="22" operation="CONSTANT" constant="7" distance="39"/>
   </goldennodes>
   <links>
     <link source="0" destination="19" weight="5"/>
