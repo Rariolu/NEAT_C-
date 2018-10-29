@@ -421,7 +421,19 @@ stmemcountset = true;
 				}
 				else if (elements->top() == outputsopentag)
 				{
-
+					if (Operations::Contains(line,"<output"))
+					{
+						std::string outid = Operations::GetTextBetween(line,"id=\"", "\"/>");
+						IntWrapper* _outid = new IntWrapper();
+						if (Operations::TryParse(outid, _outid))
+						{
+							OutputNode* outputnode = new OutputNode(_outid->Number);
+							outputnodes.push_back(outputnode);
+							nodes.push_back(outputnode);
+							nodemap.insert(std::make_pair(_outid->Number, outputnode));
+						}
+						delete _outid;
+					}
 				}
 				else if (elements->top() == shortmemorymapopentag)
 				{
