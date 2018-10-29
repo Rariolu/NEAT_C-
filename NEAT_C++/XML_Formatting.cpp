@@ -280,12 +280,11 @@ Genome* XML_Formatting::ParseGenomeDirect(std::string content)
 	bool ltmemcountset = false;
 	bool stmemcountset = false;
 	bool memorypresentset = false;
-	int id;
-	int inputcount;
-	int outputcount;
-	int ltmemcount;
-	int stmemcount;
-	//int memorypresent;
+	int id = 0;
+	int inputcount = 0;
+	int outputcount = 0;
+	int ltmemcount = 0;
+	int stmemcount = 0;
 	std::string line;
 	std::stack<std::string>* elements = new std::stack<std::string>();
 	std::istringstream stream(content);
@@ -299,7 +298,7 @@ Genome* XML_Formatting::ParseGenomeDirect(std::string content)
 	std::vector<InputMemoryNode*> stinputmemnodes;
 	std::vector<OutputMemoryNode*> stoutputmemnodes;
 	std::vector<GoldenNode*> goldennodes;
-	MemoryPresentNode* memorypresentnode;
+	MemoryPresentNode* memorypresentnode = NULL;
 	std::vector<std::pair<int,int>> goldlinks;
 	while (std::getline(stream, line))
 	{
@@ -347,8 +346,8 @@ Genome* XML_Formatting::ParseGenomeDirect(std::string content)
 						IntWrapper* n = new IntWrapper();
 						if (Operations::TryParse(memcount, n))
 						{
-							stmemcount = n->Number;
-							stmemcountset = true;
+stmemcount = n->Number;
+stmemcountset = true;
 						}
 						n->~IntWrapper();
 					}
@@ -403,7 +402,7 @@ Genome* XML_Formatting::ParseGenomeDirect(std::string content)
 					{
 						std::string intid = Operations::GetTextBetween(line, "id=\"", "\" distance");
 						IntWrapper* n = new IntWrapper();
-						if (Operations::TryParse(intid,n))
+						if (Operations::TryParse(intid, n))
 						{
 							std::string dist = Operations::GetTextBetween(line, "distance=\"", "\"/>");
 							DoubleWrapper* d = new DoubleWrapper();
@@ -434,7 +433,46 @@ Genome* XML_Formatting::ParseGenomeDirect(std::string content)
 				}
 				else if (elements->top() == goldennodesopentag)
 				{
-
+					if (Operations::Contains(line, "<gold id"))
+					{
+						std::string id = Operations::GetTextBetween(line, "id=\"", "\" operation");
+						IntWrapper* _id = new IntWrapper();
+						if (Operations::TryParse(id, _id))
+						{
+							std::string opsuffix = Operations::Contains(line, "input") ? "input1" : "constant";
+							std::string _op = Operations::GetTextBetween(line, "operation=\"", "\" " + opsuffix);
+							Operator op = GoldenNode::GetOpValue(_op);
+							if (op)
+							{
+								std::string inpstring = "input1";
+								for (int i = 1; Operations::Contains(line,inpstring); inpstring = "input" + std::to_string(++i))
+								{
+									std::string newinp = Operations::GetTextBetween(line, inpstring+"=\"","\" ");
+									IntWrapper* ninp = new IntWrapper();
+									if (Operations::TryParse(newinp, ninp))
+									{
+										goldlinks.push_back(std::make_pair(ninp->Number, _id->Number));
+									}
+									delete ninp;
+								}
+								GoldenNode* gn = new GoldenNode(op, _id->Number);
+								if (op == CONSTANT)
+								{
+									std::string constant = Operations::GetTextBetween(line, "constant=\"", "\" ");
+									DoubleWrapper* d = new DoubleWrapper();
+									if (Operations::DoubleTryParse(constant, d))
+									{
+										gn->SetConstValue(d->Number);
+									}
+									delete d;
+								}
+								goldennodes.push_back(gn);
+								nodes.push_back(gn);
+								nodemap.insert(std::make_pair(_id->Number, gn));
+							}
+						}
+						delete _id;
+					}
 				}
 				else if (elements->top() == linksopentag)
 				{
@@ -480,7 +518,7 @@ Genome* XML_Formatting::ParseGenomeDirect(std::string content)
 			}
 		}
 	}
-	if (idset && inputcountset && outputcountset && ltmemcountset && stmemcountset)
+	if (idset && inputcountset && outputcountset && ltmemcountset && stmemcountset && memorypresentset)
 	{
 		genome = new Genome(inputcount, outputcount, ltmemcount, stmemcount, id);
 		genome->SetNodes(nodes, inputnodes, outputnodes, intermediatenodes, ltinputmemnodes, ltoutputmemnodes, stinputmemnodes, stoutputmemnodes, goldennodes, memorypresentnode);

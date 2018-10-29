@@ -74,8 +74,12 @@ int Operations::GetIndexOFafter(std::string ogText, std::string excerpt)
 std::string Operations::GetTextBetween(std::string ogText, std::string a, std::string b)
 {
 	int aftera = GetIndexOFafter(ogText, a);
-	int beforeb = GetIndexOFbefore(ogText, b);
-	if ((aftera < 0 || beforeb < 0) || (aftera > beforeb))
+	if (aftera < 0)
+	{
+		return "";
+	}
+	int beforeb = GetIndexOFbefore(ogText.substr(aftera+1,ogText.length()-aftera-1), b);
+	if (/*(aftera < 0 || beforeb < 0) ||*/ (aftera > beforeb))
 	{
 		return "";
 	}

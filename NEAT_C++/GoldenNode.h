@@ -4,6 +4,7 @@
 
 enum Operator
 {
+	NONE,
 	ADD,
 	SUBTRACT,
 	DIVIDE,
@@ -29,11 +30,13 @@ class GoldenNode : public Node
 		double ConstValue();
 		void SetConstValue(double val);
 		static std::string GetOpString(Operator op);
+		static Operator GetOpValue(std::string text);
 		bool IsGold() { return true; }
 	private:
 		static int GetParameterCount(Operator op);
 		Operator _operator;
 		static std::map<Operator, std::string> opValues;
+		static std::map<std::string, Operator> opStrings;
 		std::vector<Link*> _mainInputs;
 		static std::map<Operator, int> parameterCounts;
 		double _constValue;

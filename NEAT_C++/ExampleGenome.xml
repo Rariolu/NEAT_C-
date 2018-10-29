@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--Formatting is very specific, XML parser is pretty
-basic and only works on what's -->
+basic and only works on what's absolutely necessary.-->
 <genome>
   <ID>0</ID>
   <InputCount>3</InputCount>

@@ -18,6 +18,15 @@ std::map<Operator,std::string> GoldenNode::opValues =
 	std::pair<Operator,std::string>(CONSTANT,"CONSTANT")
 };
 
+std::map<std::string,Operator> GoldenNode::opStrings =
+{
+	std::pair<std::string,Operator>("ADD",ADD),
+	std::pair<std::string,Operator>("SUBTRACT",SUBTRACT),
+	std::pair<std::string,Operator>("DIVIDE",DIVIDE),
+	std::pair<std::string,Operator>("MULTIPLY",MULTIPLY),
+	std::pair<std::string,Operator>("CONSTANT",CONSTANT)
+};
+
 GoldenNode::GoldenNode(Operator op) : GoldenNode(op,nodenum++)
 {
 
@@ -111,7 +120,24 @@ void GoldenNode::SetConstValue(double val)
 
 std::string GoldenNode::GetOpString(Operator op)
 {
-	return opValues[op];
+	std::map<Operator, std::string>::iterator iter = opValues.find(op);
+	if (iter != opValues.end())
+	{
+		return iter->second;
+	}
+	return "NONE";
+	//return opValues[op];
+}
+
+Operator GoldenNode::GetOpValue(std::string text)
+{
+	std::map<std::string, Operator>::iterator iter = opStrings.find(text);
+	if (iter != opStrings.end())
+	{
+		return iter->second;
+	}
+	return NONE;
+	//return opStrings[text];
 }
 
 int GoldenNode::GetParameterCount(Operator op)
