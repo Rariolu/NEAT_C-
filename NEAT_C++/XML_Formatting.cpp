@@ -425,11 +425,57 @@ stmemcountset = true;
 				}
 				else if (elements->top() == shortmemorymapopentag)
 				{
-
+					if (Operations::Contains(line, "<memory in"))
+					{
+						std::string inputid = Operations::GetTextBetween(line, "<memory input=\"", "\" output");
+						IntWrapper* _inputid = new IntWrapper();
+						if (Operations::TryParse(inputid, _inputid))
+						{
+							std::string outputid = Operations::GetTextBetween(line, "output=\"", "\"/>");
+							IntWrapper* _outputid = new IntWrapper();
+							if (Operations::TryParse(outputid, _outputid))
+							{
+								OutputMemoryNode* omn = new OutputMemoryNode(false, _outputid->Number);
+								InputMemoryNode* imn = new InputMemoryNode(omn, _inputid->Number);
+								stoutputmemnodes.push_back(omn);
+								stinputmemnodes.push_back(imn);
+								nodes.push_back(omn);
+								nodes.push_back(imn);
+								nodemap.insert(std::make_pair(_outputid->Number, omn));
+								nodemap.insert(std::make_pair(_inputid->Number, imn));
+							}
+						}
+					}
 				}
 				else if (elements->top() == longmemorymapopentag)
 				{
-
+					if (Operations::Contains(line, "<memory in"))
+					{
+						std::string inputid = Operations::GetTextBetween(line, "<memory input=\"", "\" output");
+						IntWrapper* _inputid = new IntWrapper();
+						if (Operations::TryParse(inputid, _inputid))
+						{
+							std::string outputid = Operations::GetTextBetween(line, "output=\"", "\" value");
+							IntWrapper* _outputid = new IntWrapper();
+							if (Operations::TryParse(outputid, _outputid))
+							{
+								std::string value = Operations::GetTextBetween(line, "value=\"", "\"/>");
+								DoubleWrapper* _value = new DoubleWrapper();
+								if (Operations::DoubleTryParse(value, _value))
+								{
+									OutputMemoryNode* omn = new OutputMemoryNode(true, _outputid->Number);
+									omn->SetValue(_value->Number);
+									InputMemoryNode* imn = new InputMemoryNode(omn, _inputid->Number);
+									ltoutputmemnodes.push_back(omn);
+									ltinputmemnodes.push_back(imn);
+									nodes.push_back(omn);
+									nodes.push_back(imn);
+									nodemap.insert(std::make_pair(_outputid->Number, omn));
+									nodemap.insert(std::make_pair(_inputid->Number, imn));
+								}
+							}
+						}
+					}
 				}
 				else if (elements->top() == goldennodesopentag)
 				{
