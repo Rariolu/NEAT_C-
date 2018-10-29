@@ -99,24 +99,50 @@ void Genome::RemoveNode(int intermediateindex)
 
 void Genome::CreateNode(int previousNode, int nextNode)
 {
-	int prevNodeIndex = previousNode % _nodes.size();
-	int nextNodeIndex = nextNode % _nodes.size();
-	if (prevNodeIndex != nextNodeIndex)
+	if (_nodes.size() > 0)
 	{
-		AddNode(_nodes[prevNodeIndex], _nodes[nextNodeIndex]);
+		int prevNodeIndex = previousNode % _nodes.size();
+		int nextNodeIndex = nextNode % _nodes.size();
+		if (prevNodeIndex != nextNodeIndex)
+		{
+			AddNode(_nodes[prevNodeIndex], _nodes[nextNodeIndex]);
+		}
 	}
 }
 
 void Genome::CreateLink(int source, int destination, double weight)
 {
-
+	if (_nodes.size() > 0)
+	{
+		Node* s = _nodes[source%_nodes.size()];
+		Node* d = _nodes[destination%_nodes.size()];
+		Node* _s = s->GetDistance() < d->GetDistance() ? s : d;
+		Node* _d = s->GetDistance() > d->GetDistance() ? s : d;
+		if (_s->GetDistance() != _d->GetDistance())
+		{
+			Node::Link* link = new Node::Link(_s, _d, weight);
+			_s->AddOutput(link);
+			_d->AddInput(link);
+		}
+	}
 }
 
 void Genome::AlterLinkWeight(int source, int destination, double weight)
 {
-	Node* s = _nodes[source%_nodes.size()];
-	Node* d = _nodes[destination%_nodes.size()];
-	std::vector<Node::Link*> s_outputs = s->GetOutputs();
+	if (_nodes.size() > 0)
+	{
+		Node* s = _nodes[source%_nodes.size()];
+		Node* d = _nodes[destination%_nodes.size()];
+		std::vector<Node::Link*> s_outputs = s->GetOutputs();
+		for (int i = 0; i < s_outputs.size(); i++)
+		{
+			if (s_outputs[i]->GetDestination() == d)
+			{
+				s_outputs[i]->SetWeight(weight);
+				return;
+			}
+		}
+	}
 }
 
 Genome* Genome::Clone(int genomeid)
@@ -196,6 +222,16 @@ int Genome::GetLTMemoryCount()
 int Genome::GetSTMemoryCount()
 {
 	return _stMemoryCount;
+}
+
+int Genome::GetNodeCount()
+{
+	return _nodes.size();
+}
+
+int Genome::GetIntermediateNodeCount()
+{
+	return _intermediatenodes.size();
 }
 
 void Genome::AddNode(Node* prevnode, Node* nextnode)

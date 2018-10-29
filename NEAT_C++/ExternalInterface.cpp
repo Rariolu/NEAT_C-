@@ -71,5 +71,37 @@ void RemoveGenome(int id)
 
 void Mutate(int genomeid, int iterations)
 {
-
+	Genome* g = GenomeManager::GetGenome(genomeid);
+	if (g)
+	{
+		for (int i = 0; i < abs(iterations); i++)
+		{
+			double r = Operations::randd->NextDouble();
+			const double options = 4;
+			int s = Operations::randd->Next(g->GetNodeCount());
+			int d = Operations::randd->Next(g->GetNodeCount());
+			double w = Operations::randd->NextDouble(-25, 25);
+			if (r < 1 / options)
+			//Remove Node
+			{
+				int n = Operations::randd->Next(g->GetIntermediateNodeCount());
+				g->RemoveNode(n);
+			}
+			else if (r < 2 / options)
+			//Create Node
+			{
+				g->CreateNode(s, d);
+			}
+			else if (r < 3 / options)
+			//Create Link
+			{
+				g->CreateLink(s, d, w);
+			}
+			else if (r < 4 / options)
+			//Alter Link Weight
+			{
+				g->AlterLinkWeight(s, d, w);
+			}
+		}
+	}
 }

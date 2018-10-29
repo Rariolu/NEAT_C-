@@ -10,13 +10,6 @@
 #include<vector>
 #include<map>
 
-//typedef struct
-//{
-//	int source;
-//	int destination;
-//	double weight;
-//}ProtoLink;
-
 class Genome
 {
 	public:
@@ -33,7 +26,6 @@ class Genome
 		std::vector<OutputMemoryNode*> STOutputMemoryNodes();
 		std::vector<GoldenNode*> GoldenNodes();
 		MemoryPresentNode* MPNode();
-		//std::map<int, Node*> GetNodeMap();
 		double GetOutput(double inputs[], int outputnum);
 		void ResetMemory();
 		void SetNodes(std::vector<Node*> nodes, std::vector<InputNode*> inputnodes, std::vector<OutputNode*> outputnodes, std::vector<Node*> intermediatenodes, std::vector<InputMemoryNode*> ltinputmemorynodes, std::vector<OutputMemoryNode*> ltoutputmemorynodes, std::vector<InputMemoryNode*> stinputmemorynodes, std::vector<OutputMemoryNode*> stoutputmemorynodes, std::vector<GoldenNode*> goldennodes, MemoryPresentNode* memorypresentnode);
@@ -48,7 +40,8 @@ class Genome
 		int GetOutputCount();
 		int GetLTMemoryCount();
 		int GetSTMemoryCount();
-
+		int GetNodeCount();
+		int GetIntermediateNodeCount();
 	private:
 		int _id;
 		std::vector<Node*> _nodes;
@@ -61,7 +54,6 @@ class Genome
 		std::vector<OutputMemoryNode*> _stoutputmemorynodes;
 		std::vector<GoldenNode*> _goldennodes;
 		MemoryPresentNode* _memorypresentnode;
-		//std::map<int, Node*> _nodemap;
 		int _inputCount;
 		int _outputCount;
 		int _ltMemoryCount;
