@@ -1,5 +1,10 @@
 #include "ExternalInterface.h"
 
+int TestDLL()
+{
+	return 5;
+}
+
 bool GenomeExists(int id)
 {
 	return GenomeManager::GetGenome(id);
@@ -45,6 +50,11 @@ bool ParseGenome(char* filepath)
 	return genome;
 }
 
+void RemoveGenome(int id)
+{
+	GenomeManager::RemoveGenome(id);
+}
+
 double GetOutputFromGenome(int genome, int inputcount, double inputs[], int outputnum)
 {
 	Genome* _genome = GenomeManager::GetGenome(genome);
@@ -64,11 +74,6 @@ void ResetMemory(int genomeid)
 	}
 }
 
-void RemoveGenome(int id)
-{
-	GenomeManager::RemoveGenome(id);
-}
-
 void Mutate(int genomeid, int iterations)
 {
 	Genome* g = GenomeManager::GetGenome(genomeid);
@@ -77,7 +82,7 @@ void Mutate(int genomeid, int iterations)
 		for (int i = 0; i < abs(iterations); i++)
 		{
 			double r = Operations::randd->NextDouble();
-			const double options = 4;
+			const double options = 5;
 			int s = Operations::randd->Next(g->GetNodeCount());
 			int d = Operations::randd->Next(g->GetNodeCount());
 			double w = Operations::randd->NextDouble(-25, 25);
@@ -102,6 +107,56 @@ void Mutate(int genomeid, int iterations)
 			{
 				g->AlterLinkWeight(s, d, w);
 			}
+			else if (r < 5 / options)
+			//Remove Link
+			{
+				g->RemoveLink(s, d);
+			}
 		}
+	}
+}
+
+void RemoveNode(int genomeid, int intermediateindex)
+{
+	Genome* g = GenomeManager::GetGenome(genomeid);
+	if (g)
+	{
+		g->RemoveNode(intermediateindex);
+	}
+}
+
+void CreateNode(int genomeid, int previousNode, int nextNode)
+{
+	Genome* g = GenomeManager::GetGenome(genomeid);
+	if (g)
+	{
+		g->CreateNode(previousNode, nextNode);
+	}
+}
+
+void CreateLink(int genomeid, int source, int destination, double weight)
+{
+	Genome* g = GenomeManager::GetGenome(genomeid);
+	if (g)
+	{
+		g->CreateLink(source, destination, weight);
+	}
+}
+
+void AlterLinkWeight(int genomeid, int source, int destination, double weight)
+{
+	Genome* g = GenomeManager::GetGenome(genomeid);
+	if (g)
+	{
+		g->AlterLinkWeight(source, destination, weight);
+	}
+}
+
+void RemoveLink(int genomeid, int source, int destination)
+{
+	Genome* g = GenomeManager::GetGenome(genomeid);
+	if (g)
+	{
+		g->RemoveLink(source, destination);
 	}
 }

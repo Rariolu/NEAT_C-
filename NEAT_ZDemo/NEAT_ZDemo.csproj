@@ -4,15 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2E991E46-3E58-4403-A6EE-3F3642DEB8E9}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{557BDD9A-330B-44B3-948A-E68B9B7C7180}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NEAT_Interface</RootNamespace>
-    <AssemblyName>NEAT_Interface</AssemblyName>
+    <RootNamespace>NEAT_ZDemo</RootNamespace>
+    <AssemblyName>NEAT_ZDemo</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -21,9 +23,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -42,15 +44,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Import.cs" />
-    <Compile Include="Output.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NEAT_Interface\NEAT_Interface.csproj">
+      <Project>{2e991e46-3e58-4403-a6ee-3f3642deb8e9}</Project>
+      <Name>NEAT_Interface</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>echo "CMD start"
-IF NOT EXIST "$(SolutionDir)NEAT_Interface\bin\Debug\NEAT_C++.dll" (
-xcopy "$(SolutionDir)x64\Debug\*.dll" "$(SolutionDir)NEAT_Interface\bin\Debug"
+IF NOT EXIST "$(SolutionDir)NEAT_ZDemo\bin\Debug\NEAT_C++.dll" (
+xcopy "$(SolutionDir)x64\Debug\*.dll" "$(SolutionDir)NEAT_ZDemo\bin\Debug"
 ) ELSE (
 echo "NEAT_C++ already in correct directory"
 )

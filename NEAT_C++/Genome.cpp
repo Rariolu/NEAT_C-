@@ -145,6 +145,25 @@ void Genome::AlterLinkWeight(int source, int destination, double weight)
 	}
 }
 
+void Genome::RemoveLink(int source, int destination)
+{
+	if (GetNodeCount() > 0)
+	{
+		Node* s = _nodes[source%GetNodeCount()];
+		Node* d = _nodes[destination%GetNodeCount()];
+		std::vector<Node::Link*> s_outputs = s->GetOutputs();
+		for (int i = 0; i < s_outputs.size(); i++)
+		{
+			if (s_outputs[i]->GetDestination() == d)
+			{
+				s->RemoveOutput(i);
+				d->RemoveInput(s_outputs[i]);
+				return;
+			}
+		}
+	}
+}
+
 Genome* Genome::Clone(int genomeid)
 {
 	std::vector<Node*> cloneNodes;

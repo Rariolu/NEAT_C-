@@ -34,6 +34,7 @@ class Genome
 		void CreateNode(int previousNode, int nextNode);
 		void CreateLink(int source, int destination, double weight);
 		void AlterLinkWeight(int source, int destination, double weight);
+		void RemoveLink(int source, int destination);
 		Genome* Clone(int genomeid);
 
 		int GetInputCount();

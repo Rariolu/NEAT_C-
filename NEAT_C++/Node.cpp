@@ -75,7 +75,12 @@ double Node::GetNodeValue(double inputs[])
 		Node* source = link->GetSource();
 		sum += source->GetNodeValue(inputs);
 	}
-	return Memorise(Operations::Sigmoid(sum));
+	double v = Operations::Sigmoid(sum);
+	if (!IsGold())
+	{
+		return Memorise(v);
+	}
+	return v;
 }
 
 void Node::ResetMemory()
