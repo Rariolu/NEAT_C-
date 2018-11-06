@@ -66,6 +66,7 @@ class Node
 		std::vector<Link*> GetOutputs();
 		void CheckNodeNum(int value);
 		virtual double GetNodeValue(double inputs[]);
+		double GetSigmoid(double inputs[]);
 		void ResetMemory();
 		void RemoveInput(Link* link);
 		void RemoveInput(int index);
@@ -83,6 +84,8 @@ class Node
 		virtual bool IsGold() { return false; }
 	protected:
 		double Memorise(double value);
+		bool memorised = false;
+		double memorisedOutput;
 		static int nodenum;
 		Node* _clone;
 		double distanceFromStart;
@@ -90,8 +93,7 @@ class Node
 	private:
 		std::vector<Link*> _inputs;
 		std::vector<Link*> _outputs;
-		double memorisedOutput;
-		bool memorised = false;
+		
 		int nodeid;
 };
 

@@ -68,6 +68,24 @@ double Node::GetNodeValue(double inputs[])
 	{
 		return memorisedOutput;
 	}
+	return Memorise(GetSigmoid(inputs));
+	//double sum = 0;
+	//for (int i = 0; i < _inputs.size(); i++)
+	//{
+	//	Link* link = _inputs[i];
+	//	Node* source = link->GetSource();
+	//	sum += source->GetNodeValue(inputs);
+	//}
+	//double v = Operations::Sigmoid(sum);
+	//if (!IsGold())
+	//{
+	//	return Memorise(v);
+	//}
+	//return v;
+}
+
+double Node::GetSigmoid(double inputs[])
+{
 	double sum = 0;
 	for (int i = 0; i < _inputs.size(); i++)
 	{
@@ -75,12 +93,7 @@ double Node::GetNodeValue(double inputs[])
 		Node* source = link->GetSource();
 		sum += source->GetNodeValue(inputs);
 	}
-	double v = Operations::Sigmoid(sum);
-	if (!IsGold())
-	{
-		return Memorise(v);
-	}
-	return v;
+	return Operations::Sigmoid(sum);
 }
 
 void Node::ResetMemory()

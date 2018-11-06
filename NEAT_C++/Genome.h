@@ -32,6 +32,7 @@ class Genome
 		
 		void RemoveNode(int intermediateindex);
 		void CreateNode(int previousNode, int nextNode);
+		void CreateIntermediateNode(int inputNode, int outputNode);
 		void CreateLink(int source, int destination, double weight);
 		void AlterLinkWeight(int source, int destination, double weight);
 		void RemoveLink(int source, int destination);

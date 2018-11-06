@@ -42,8 +42,12 @@ GoldenNode::~GoldenNode()
 	
 }
 
-double GoldenNode::GetValue(double inputs[])
+double GoldenNode::GetNodeValue(double inputs[])
 {
+	if (memorised)
+	{
+		return memorisedOutput;
+	}
 	int paramcount = GetParameterCount(_operator);
 	std::vector<double> params;
 	for (int i = 0; i < paramcount && _mainInputs.size() > 0; i++)
@@ -54,7 +58,7 @@ double GoldenNode::GetValue(double inputs[])
 		double rNorm = Operations::ReverseNormalise(inp*weight);
 		params.push_back(rNorm);
 	}
-	double mult = GetInputs().size() > paramcount ? Node::GetNodeValue(inputs) : 1;
+	double mult = GetInputs().size() > paramcount ? GetSigmoid(inputs) : 1;
 	switch (_operator)
 	{
 		case ADD:

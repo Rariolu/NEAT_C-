@@ -20,7 +20,7 @@ class GoldenNode : public Node
 		GoldenNode(Operator op);
 		GoldenNode(Operator, int nodeID);
 		~GoldenNode();
-		double GetValue(double inputs[]);
+		double GetNodeValue(double inputs[]);
 		Node* GetClone();
 		GoldenNode* GetGoldenClone();
 		void AddMainInput(Link* input);

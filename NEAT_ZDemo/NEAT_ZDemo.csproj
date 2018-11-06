@@ -55,18 +55,15 @@
       <Project>{2e991e46-3e58-4403-a6ee-3f3642deb8e9}</Project>
       <Name>NEAT_Interface</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NeuralUtil\NeuralUtil.csproj">
+      <Project>{70c0dcff-96a5-4000-9a39-c75615b61673}</Project>
+      <Name>NeuralUtil</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>echo "CMD start"
-IF NOT EXIST "$(SolutionDir)NEAT_ZDemo\bin\Debug\NEAT_C++.dll" (
-xcopy "$(SolutionDir)x64\Debug\*.dll" "$(SolutionDir)NEAT_ZDemo\bin\Debug"
-) ELSE (
-echo "NEAT_C++ already in correct directory"
-)
-echo "CMD end"
-EXIT
-</PostBuildEvent>
+    <PostBuildEvent>del /f "$(SolutionDir)NEAT_ZDemo\bin\Debug\NEAT_C++.dll"
+xcopy "$(SolutionDir)x64\Debug\*.dll" "$(SolutionDir)NEAT_ZDemo\bin\Debug"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

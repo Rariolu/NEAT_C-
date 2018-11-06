@@ -39,15 +39,17 @@ extern "C" void SaveGenome(int id, char* filepath)
 	}
 }
 
-bool ParseGenome(char* filepath)
+int ParseGenome(char* filepath)
 {
 	std::string file = std::string(filepath);
 	Genome* genome = XML_Formatting::ParseGenome(file);
 	if (genome)
 	{
 		GenomeManager::InsertGenome(genome->ID(), genome);
+		return genome->ID();
 	}
-	return genome;
+	return -1;
+	//return genome;
 }
 
 void RemoveGenome(int id)
@@ -81,36 +83,49 @@ void Mutate(int genomeid, int iterations)
 	{
 		for (int i = 0; i < abs(iterations); i++)
 		{
+			std::cout << "Mutation iteration started" << std::endl;
 			double r = Operations::randd->NextDouble();
-			const double options = 5;
+			const double options = 6;
 			int s = Operations::randd->Next(g->GetNodeCount());
 			int d = Operations::randd->Next(g->GetNodeCount());
 			double w = Operations::randd->NextDouble(-25, 25);
-			if (r < 1 / options)
+			if (r <= 1 / options)
 			//Remove Node
 			{
+				std::cout << "Node removal" << std::endl;
 				int n = Operations::randd->Next(g->GetIntermediateNodeCount());
 				g->RemoveNode(n);
 			}
-			else if (r < 2 / options)
+			else if (r <= 2 / options)
 			//Create Node
 			{
+				std::cout << "Node creation" << std::endl;
 				g->CreateNode(s, d);
 			}
-			else if (r < 3 / options)
+			else if (r <= 3 / options)
 			//Create Link
 			{
+				std::cout << "Link creation" << std::endl;
 				g->CreateLink(s, d, w);
 			}
-			else if (r < 4 / options)
+			else if (r <= 4 / options)
 			//Alter Link Weight
 			{
+				std::cout << "Link weight alteration" << std::endl;
 				g->AlterLinkWeight(s, d, w);
 			}
-			else if (r < 5 / options)
+			else if (r <= 5 / options)
 			//Remove Link
 			{
+				std::cout << "Link removal" << std::endl;
 				g->RemoveLink(s, d);
+			}
+			else if (r <= 6 / options)
+			{
+				std::cout << "Intermediate Node creation" << std::endl;
+				int inp = Operations::randd->Next(g->GetInputCount());
+				int out = Operations::randd->Next(g->GetOutputCount());
+				g->CreateIntermediateNode(inp, out);
 			}
 		}
 	}
@@ -159,4 +174,63 @@ void RemoveLink(int genomeid, int source, int destination)
 	{
 		g->RemoveLink(source, destination);
 	}
+}
+
+void CreateIntermediateNode(int genomeid, int inputNode, int outputNode)
+{
+	Genome* g = GenomeManager::GetGenome(genomeid);
+	if (g)
+	{
+		g->CreateIntermediateNode(inputNode, outputNode);
+	}
+}
+
+int InputCount(int genomeid)
+{
+	Genome* g = GenomeManager::GetGenome(genomeid);
+	if (g)
+	{
+		return g->GetInputCount();
+	}
+	return -1;
+}
+
+int OutputCount(int genomeid)
+{
+	Genome* g = GenomeManager::GetGenome(genomeid);
+	if (g)
+	{
+		return g->GetOutputCount();
+	}
+	return -1;
+}
+
+int LTMemoryCount(int genomeid)
+{
+	Genome* g = GenomeManager::GetGenome(genomeid);
+	if (g)
+	{
+		return g->GetLTMemoryCount();
+	}
+	return -1;
+}
+
+int STMemoryCount(int genomeid)
+{
+	Genome* g = GenomeManager::GetGenome(genomeid);
+	if (g)
+	{
+		return g->GetSTMemoryCount();
+	}
+	return -1;
+}
+
+int NodeCount(int genomeid)
+{
+	Genome* g = GenomeManager::GetGenome(genomeid);
+	if (g)
+	{
+		return g->GetNodeCount();
+	}
+	return -1;
 }

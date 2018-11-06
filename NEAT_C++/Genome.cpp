@@ -2,7 +2,44 @@
 
 Genome::Genome(int inputcount, int outputcount, int ltmemorycount, int stmemorycount, int id)
 {
-
+	_inputCount = inputcount;
+	_outputCount = outputcount;
+	_ltMemoryCount = ltmemorycount;
+	_stMemoryCount = stmemorycount;
+	std::cout << "NodeCount: " << GetNodeCount() << std::endl;
+	for (int i = 0; i < inputcount; i++)
+	{
+		InputNode* inp = new InputNode(i);
+		_inputnodes.push_back(inp);
+		_nodes.push_back(inp);
+	}
+	for (int i = 0; i < outputcount; i++)
+	{
+		OutputNode* outp = new OutputNode();
+		_outputnodes.push_back(outp);
+		_nodes.push_back(outp);
+	}
+	for (int i = 0; i < ltmemorycount; i++)
+	{
+		OutputMemoryNode* omn = new OutputMemoryNode(true);
+		InputMemoryNode* imn = new InputMemoryNode(omn);
+		_ltoutputmemorynodes.push_back(omn);
+		_ltinputmemorynodes.push_back(imn);
+		_nodes.push_back(omn);
+		_nodes.push_back(imn);
+	}
+	for (int i = 0; i < stmemorycount; i++)
+	{
+		OutputMemoryNode* omn = new OutputMemoryNode(false);
+		InputMemoryNode* imn = new InputMemoryNode(omn);
+		_stoutputmemorynodes.push_back(omn);
+		_stinputmemorynodes.push_back(imn);
+		_nodes.push_back(omn);
+		_nodes.push_back(imn);
+	}
+	_memorypresentnode = new MemoryPresentNode(stmemorycount > 0);
+	_nodes.push_back(_memorypresentnode);
+	std::cout << "NodeCount: " << GetNodeCount() << std::endl;
 }
 
 Genome::~Genome()
@@ -83,7 +120,16 @@ void Genome::ResetMemory()
 
 void Genome::SetNodes(std::vector<Node*> nodes, std::vector<InputNode*> inputnodes, std::vector<OutputNode*> outputnodes, std::vector<Node*> intermediatenodes, std::vector<InputMemoryNode*> ltinputmemorynodes, std::vector<OutputMemoryNode*> ltoutputmemorynodes, std::vector<InputMemoryNode*> stinputmemorynodes, std::vector<OutputMemoryNode*> stoutputmemorynodes, std::vector<GoldenNode*> goldennodes, MemoryPresentNode* memorypresentnode)
 {
-
+	_nodes = nodes;
+	_inputnodes = inputnodes;
+	_outputnodes = outputnodes;
+	_intermediatenodes = intermediatenodes;
+	_ltinputmemorynodes = ltinputmemorynodes;
+	_ltoutputmemorynodes = ltoutputmemorynodes;
+	_stinputmemorynodes = stinputmemorynodes;
+	_stoutputmemorynodes = stoutputmemorynodes;
+	_goldennodes = goldennodes;
+	_memorypresentnode = memorypresentnode;
 }
 
 
@@ -101,12 +147,23 @@ void Genome::CreateNode(int previousNode, int nextNode)
 {
 	if (_nodes.size() > 0)
 	{
+		std::cout << "Create Node method" << std::endl;
 		int prevNodeIndex = previousNode % _nodes.size();
 		int nextNodeIndex = nextNode % _nodes.size();
 		if (prevNodeIndex != nextNodeIndex)
 		{
 			AddNode(_nodes[prevNodeIndex], _nodes[nextNodeIndex]);
 		}
+	}
+}
+
+void Genome::CreateIntermediateNode(int inputNode, int outputNode)
+{
+	if (_nodes.size() > 0)
+	{
+		Node* inp = _inputnodes[inputNode % _inputnodes.size()];
+		Node* out = _outputnodes[outputNode % _outputnodes.size()];
+		AddNode(inp, out);
 	}
 }
 
@@ -166,7 +223,9 @@ void Genome::RemoveLink(int source, int destination)
 
 Genome* Genome::Clone(int genomeid)
 {
+	//std::cout << "Clone method called" << std::endl;
 	std::vector<Node*> cloneNodes;
+	//std::cout << "Begin node cloning" << std::endl;
 	for (int i = 0; i < _nodes.size(); i++)
 	{
 		Node* _clonenode = _nodes[i]->GetClone();
@@ -178,48 +237,59 @@ Genome* Genome::Clone(int genomeid)
 		cloneNodes.push_back(_clonenode);
 	}
 	std::vector<InputNode*> cloneInputs;
+	//std::cout << "Input node cloning" << std::endl;
 	for (int i = 0; i < _inputnodes.size(); i++)
 	{
 		cloneInputs.push_back(_inputnodes[i]->GetINClone());
 	}
 	std::vector<OutputNode*> cloneOutputs;
+	//std::cout << "Output node cloning" << std::endl;
 	for (int i = 0; i < _outputnodes.size(); i++)
 	{
 		cloneOutputs.push_back(_outputnodes[i]->GetONNode());
 	}
 	std::vector<Node*> cloneIntermediates;
+	//std::cout << "Intermediate node cloning" << std::endl;
 	for (int i = 0; i < _intermediatenodes.size(); i++)
 	{
 		cloneIntermediates.push_back(_intermediatenodes[i]->GetClone());
 	}
 	std::vector<InputMemoryNode*> cloneSTINPMems;
+	//std::cout << "STINPMEM node cloning" << std::endl;
 	for (int i = 0; i < _stinputmemorynodes.size(); i++)
 	{
 		cloneSTINPMems.push_back(_stinputmemorynodes[i]->GetIMNClone());
 	}
 	std::vector<OutputMemoryNode*> cloneSTOUTMems;
+	//std::cout << "STOUTMEM node cloning" << std::endl;
 	for (int i = 0; i < _stoutputmemorynodes.size(); i++)
 	{
 		cloneSTOUTMems.push_back(_stoutputmemorynodes[i]->GetOMNClone());
 	}
 	std::vector<InputMemoryNode*> cloneLTINPMems;
+	//std::cout << "LTINPMEM node cloning" << std::endl;
 	for (int i = 0; i < _ltinputmemorynodes.size(); i++)
 	{
 		cloneLTINPMems.push_back(_ltinputmemorynodes[i]->GetIMNClone());
 	}
 	std::vector<OutputMemoryNode*> cloneLTOUTMems;
+	//std::cout << "LTOUTMEM node cloning" << std::endl;
 	for (int i = 0; i < _ltoutputmemorynodes.size(); i++)
 	{
 		cloneLTOUTMems.push_back(_ltoutputmemorynodes[i]->GetOMNClone());
 	}
 	std::vector<GoldenNode*> cloneGoldenNodes;
+	//std::cout << "Gold node cloning" << std::endl;
 	for (int i = 0; i < _goldennodes.size(); i++)
 	{
 		cloneGoldenNodes.push_back(_goldennodes[i]->GetGoldenClone());
 	}
+	//std::cout << "Memory Present Node cloning" << std::endl;
 	MemoryPresentNode* cloneMPNode = _memorypresentnode->GetMPClone();
 	Genome* genome = new Genome(_inputCount, _outputCount, _ltMemoryCount, _stMemoryCount, genomeid);
+	//std::cout << "Genome created" << std::endl;
 	genome->SetNodes(cloneNodes, cloneInputs, cloneOutputs, cloneIntermediates, cloneLTINPMems, cloneLTOUTMems, cloneSTINPMems, cloneSTOUTMems, cloneGoldenNodes, cloneMPNode);
+	//std::cout << "Nodes set" << std::endl;
 	return genome;
 }
 

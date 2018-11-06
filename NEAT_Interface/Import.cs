@@ -33,7 +33,7 @@ namespace NEAT_Interface
         internal static extern void SaveGenome(int id, string filepath);
 
         [DllImport(dllname,CallingConvention=CallingConvention.Cdecl)]
-        internal static extern bool ParseGenome(string filepath);
+        internal static extern int ParseGenome(string filepath);
 
         [DllImport(dllname, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void RemoveGenome(int id);
@@ -61,6 +61,24 @@ namespace NEAT_Interface
 
         [DllImport(dllname, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void RemoveLink(int genomeid, int source, int destination);
+
+        [DllImport(dllname, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void CreateIntermediateNode(int genomeid, int inputNode, int outputNode);
+
+        [DllImport(dllname,CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int InputCount(int genomeid);
+
+        [DllImport(dllname,CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int OutputCount(int genomeid);
+
+        [DllImport(dllname,CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int LTMemoryCount(int genomeid);
+
+        [DllImport(dllname,CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int STMemoryCount(int genomeid);
+
+        [DllImport(dllname, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int NodeCount(int genomeid);
     }
 
     public static class Interface
@@ -138,13 +156,13 @@ namespace NEAT_Interface
             }
         }
 
-        public static bool ParseGenome(string filepath)
+        public static int ParseGenome(string filepath)
         {
             if (DLLExistsLocally())
             {
                 return Import.ParseGenome(filepath);
             }
-            return false;
+            return -1;
         }
 
         public static void RemoveGenome(int id)
@@ -218,6 +236,59 @@ namespace NEAT_Interface
             {
                 Import.RemoveLink(genomeid, source, destination);
             }
+        }
+        
+        public static void CreateIntermediateNode(int genomeid, int inputNode, int outputNode)
+        {
+            if (DLLExistsLocally())
+            {
+                Import.CreateIntermediateNode(genomeid, inputNode, outputNode);
+            }
+        }
+
+        public static int InputCount(int genomeid)
+        {
+            if (DLLExistsLocally())
+            {
+                return Import.InputCount(genomeid);
+            }
+            return -1;
+        }
+
+        public static int OutputCount(int genomeid)
+        {
+            if (DLLExistsLocally())
+            {
+                return Import.OutputCount(genomeid);
+            }
+            return -1;
+        }
+
+        public static int LTMemoryCount(int genomeid)
+        {
+            if (DLLExistsLocally())
+            {
+                return Import.LTMemoryCount(genomeid);
+            }
+            return -1;
+        }
+
+        public static int STMemoryCount(int genomeid)
+        {
+            if (DLLExistsLocally())
+            {
+                return Import.STMemoryCount(genomeid);
+            }
+            return -1;
+        }
+
+        public static int NodeCount(int genomeid)
+        {
+            if (DLLExistsLocally())
+            {
+                return Import.NodeCount(genomeid);
+            }
+            return -1;
         }
     }
 }
