@@ -78,56 +78,63 @@ void ResetMemory(int genomeid)
 
 void Mutate(int genomeid, int iterations)
 {
-	Genome* g = GenomeManager::GetGenome(genomeid);
-	if (g)
+	try
 	{
-		for (int i = 0; i < abs(iterations); i++)
+		Genome* g = GenomeManager::GetGenome(genomeid);
+		if (g)
 		{
-			std::cout << "Mutation iteration started" << std::endl;
-			double r = Operations::randd->NextDouble();
-			const double options = 6;
-			int s = Operations::randd->Next(g->GetNodeCount());
-			int d = Operations::randd->Next(g->GetNodeCount());
-			double w = Operations::randd->NextDouble(-25, 25);
-			if (r <= 1 / options)
-			//Remove Node
+			for (int i = 0; i < abs(iterations); i++)
 			{
-				std::cout << "Node removal" << std::endl;
-				int n = Operations::randd->Next(g->GetIntermediateNodeCount());
-				g->RemoveNode(n);
-			}
-			else if (r <= 2 / options)
-			//Create Node
-			{
-				std::cout << "Node creation" << std::endl;
-				g->CreateNode(s, d);
-			}
-			else if (r <= 3 / options)
-			//Create Link
-			{
-				std::cout << "Link creation" << std::endl;
-				g->CreateLink(s, d, w);
-			}
-			else if (r <= 4 / options)
-			//Alter Link Weight
-			{
-				std::cout << "Link weight alteration" << std::endl;
-				g->AlterLinkWeight(s, d, w);
-			}
-			else if (r <= 5 / options)
-			//Remove Link
-			{
-				std::cout << "Link removal" << std::endl;
-				g->RemoveLink(s, d);
-			}
-			else if (r <= 6 / options)
-			{
-				std::cout << "Intermediate Node creation" << std::endl;
-				int inp = Operations::randd->Next(g->GetInputCount());
-				int out = Operations::randd->Next(g->GetOutputCount());
-				g->CreateIntermediateNode(inp, out);
+				std::cout << "Mutation iteration started" << std::endl;
+				double r = Operations::randd->NextDouble();
+				const double options = 6;
+				int s = Operations::randd->Next(g->GetNodeCount());
+				int d = Operations::randd->Next(g->GetNodeCount());
+				double w = Operations::randd->NextDouble(-25, 25);
+				if (r <= 1 / options)
+					//Remove Node
+				{
+					std::cout << "Node removal" << std::endl;
+					int n = Operations::randd->Next(g->GetIntermediateNodeCount());
+					g->RemoveNode(n);
+				}
+				else if (r <= 2 / options)
+					//Create Node
+				{
+					std::cout << "Node creation" << std::endl;
+					g->CreateNode(s, d);
+				}
+				else if (r <= 3 / options)
+					//Create Link
+				{
+					std::cout << "Link creation" << std::endl;
+					g->CreateLink(s, d, w);
+				}
+				else if (r <= 4 / options)
+					//Alter Link Weight
+				{
+					std::cout << "Link weight alteration" << std::endl;
+					g->AlterLinkWeight(s, d, w);
+				}
+				else if (r <= 5 / options)
+					//Remove Link
+				{
+					std::cout << "Link removal" << std::endl;
+					g->RemoveLink(s, d);
+				}
+				else if (r <= 6 / options)
+				{
+					std::cout << "Intermediate Node creation" << std::endl;
+					int inp = Operations::randd->Next(g->GetInputCount());
+					int out = Operations::randd->Next(g->GetOutputCount());
+					g->CreateIntermediateNode(inp, out);
+				}
 			}
 		}
+	}
+	catch (std::exception err)
+	{
+		std::cout << err.what() << std::endl;
 	}
 }
 

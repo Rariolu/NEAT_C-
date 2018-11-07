@@ -29,6 +29,7 @@ namespace NEAT_ZDemo
             h.CreateIntermediateNode(rand.Next(h.InputCount), rand.Next(h.OutputCount));
             h.CreateIntermediateNode(rand.Next(h.InputCount), rand.Next(h.OutputCount));
             h.CreateIntermediateNode(rand.Next(h.InputCount), rand.Next(h.OutputCount));
+            Console.WriteLine("NodeCount: {0};", h.NodeCount());
             //for (int i = 0; i < 1000 && hr == 0; i++)
             //{
             //    int nodecount = h.NodeCount();

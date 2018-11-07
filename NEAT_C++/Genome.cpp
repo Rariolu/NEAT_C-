@@ -6,7 +6,7 @@ Genome::Genome(int inputcount, int outputcount, int ltmemorycount, int stmemoryc
 	_outputCount = outputcount;
 	_ltMemoryCount = ltmemorycount;
 	_stMemoryCount = stmemorycount;
-	std::cout << "NodeCount: " << GetNodeCount() << std::endl;
+	//std::cout << "NodeCount: " << GetNodeCount() << std::endl;
 	for (int i = 0; i < inputcount; i++)
 	{
 		InputNode* inp = new InputNode(i);
@@ -39,7 +39,7 @@ Genome::Genome(int inputcount, int outputcount, int ltmemorycount, int stmemoryc
 	}
 	_memorypresentnode = new MemoryPresentNode(stmemorycount > 0);
 	_nodes.push_back(_memorypresentnode);
-	std::cout << "NodeCount: " << GetNodeCount() << std::endl;
+	//std::cout << "NodeCount: " << GetNodeCount() << std::endl;
 }
 
 Genome::~Genome()
