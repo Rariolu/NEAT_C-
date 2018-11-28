@@ -11,6 +11,7 @@
 #include"DoubleWrapper.h"
 #include<vector>//Remove when possible
 //using namespace std;
+#include"ConsoleManager.h"
 
 class Operations
 {

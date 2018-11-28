@@ -6,7 +6,8 @@ std::map<Operator,int> GoldenNode::parameterCounts =
 	std::pair<Operator,int>(SUBTRACT,2),
 	std::pair<Operator,int>(DIVIDE,2),
 	std::pair<Operator,int>(MULTIPLY,2),
-	std::pair<Operator,int>(CONSTANT,0)
+	std::pair<Operator,int>(CONSTANT,0),
+	std::pair<Operator,int>(BINARY,0)
 };
 
 std::map<Operator,std::string> GoldenNode::opValues = 
@@ -15,7 +16,8 @@ std::map<Operator,std::string> GoldenNode::opValues =
 	std::pair<Operator,std::string>(SUBTRACT,"SUBTRACT"),
 	std::pair<Operator,std::string>(DIVIDE,"DIVIDE"),
 	std::pair<Operator,std::string>(MULTIPLY,"MULTIPLY"),
-	std::pair<Operator,std::string>(CONSTANT,"CONSTANT")
+	std::pair<Operator,std::string>(CONSTANT,"CONSTANT"),
+	std::pair<Operator,std::string>(BINARY,"BINARY")
 };
 
 std::map<std::string,Operator> GoldenNode::opStrings =
@@ -24,7 +26,8 @@ std::map<std::string,Operator> GoldenNode::opStrings =
 	std::pair<std::string,Operator>("SUBTRACT",SUBTRACT),
 	std::pair<std::string,Operator>("DIVIDE",DIVIDE),
 	std::pair<std::string,Operator>("MULTIPLY",MULTIPLY),
-	std::pair<std::string,Operator>("CONSTANT",CONSTANT)
+	std::pair<std::string,Operator>("CONSTANT",CONSTANT),
+	std::pair<std::string,Operator>("BINARY",BINARY)
 };
 
 GoldenNode::GoldenNode(Operator op) : GoldenNode(op,nodenum++)
@@ -71,6 +74,8 @@ double GoldenNode::GetNodeValue(double inputs[])
 			return mult*Operations::Normalise(params[0] * params[1]);
 		case CONSTANT:
 			return mult*_constValue;
+		case BINARY:
+			return mult > 0.5 ? 1 : 0;
 		default:
 			return mult;
 	}

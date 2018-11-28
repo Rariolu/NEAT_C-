@@ -11,7 +11,7 @@ class Node
 		class Link
 		{
 			public:
-				Link(Node* source, Node*destination) : _source(source), _destination(destination), _weight(Operations::randd->NextDouble())
+				Link(Node* source, Node*destination) : _source(source), _destination(destination), _weight(Operations::randd->NextDouble(-10,10))
 				{
 
 				}
@@ -41,14 +41,37 @@ class Node
 				}
 				Link* GetClone()
 				{
-					if (_source->GetClone() && _destination->GetClone())
+					bool activation = ConsoleManager::GetEnabled();
+					ConsoleManager::DeActivate();
+					if (_source && _destination)
 					{
-						Link* clone = new Link(_source->GetClone(), _destination->GetClone(), _weight);
-						_source->GetClone()->AddOutput(clone);
-						_destination->GetClone()->AddInput(clone);
-						return clone;
+						ConsoleManager::Output("Source and destination exist.");
+						if (_source->GetClone() && _destination->GetClone())
+						{
+							ConsoleManager::Output("Source and destination clones exist");
+							Link* clone = new Link(_source->GetClone(), _destination->GetClone(), _weight);
+							_source->GetClone()->AddOutput(clone);
+							_destination->GetClone()->AddInput(clone);
+							ConsoleManager::Output("Link added to clones.");
+							ConsoleManager::Activate();
+							return clone;
+						}
 					}
+					ConsoleManager::SetEnabled(activation);
 					return NULL;
+				}
+				void Train(double prevDelta, double inputs[])
+				{
+					double output = _weight * _source->GetNodeValue(inputs);
+					double error = prevDelta * _weight;
+					double delta = error * output;
+					_weight += output * delta;
+					//TODO: Decide how Golden node training works.
+					std::vector<Link*> sourceInputs = _source->GetInputs();
+					for (int i = 0; i < sourceInputs.size(); i++)
+					{
+						sourceInputs[i]->Train(delta, inputs);
+					}
 				}
 			private:
 				Node* _source;
@@ -62,6 +85,8 @@ class Node
 		void AddInput(Link* link);
 		void AddOutput(Node* node);
 		void AddOutput(Link* link);
+		bool ContainsInput(Node* node);
+		bool ContainsOutput(Node* node);
 		std::vector<Link*> GetInputs();
 		std::vector<Link*> GetOutputs();
 		void CheckNodeNum(int value);
@@ -73,7 +98,7 @@ class Node
 		void RemoveOutput(Link* link);
 		void RemoveOutput(int index);
 		void DeleteLinks();
-		double GetDistance();
+		virtual double GetDistance();
 		void SetDistance(double d);
 		void SetInputWeight(int index, double weight);
 		void SetOutputWeight(int index, double weight);

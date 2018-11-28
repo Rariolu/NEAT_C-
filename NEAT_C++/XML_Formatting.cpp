@@ -195,12 +195,15 @@ std::string XML_Formatting::ReadFile(std::string filepath)
 
 Genome* XML_Formatting::ParseGenome(std::string filepath)
 {
+	ConsoleManager::Activate();
+	ConsoleManager::Output("XML_Formatting::ParseGenome");
 	std::string content = ReadFile(filepath);
+	ConsoleManager::Output("File has been read.");
 	Genome* genome = ParseGenomeDirect(content);
-	if (genome)
-	{
-		GenomeManager::InsertGenome(genome->ID(), genome);
-	}
+	//if (genome)
+	//{
+	//	GenomeManager::InsertGenome(genome->ID(), genome);
+	//}
 	return genome;
 }
 
@@ -240,6 +243,9 @@ std::vector<std::string> XML_Formatting::OpenTags()
 		opentags.push_back(inputsopentag);
 		opentags.push_back(intermediatesopentag);
 		opentags.push_back(outputsopentag);
+		opentags.push_back(shortmemorymapopentag);
+		opentags.push_back(longmemorymapopentag);
+		opentags.push_back(goldennodesopentag);
 		opentags.push_back(linksopentag);
 	}
 	return opentags;
@@ -255,6 +261,7 @@ std::vector<std::string> XML_Formatting::CloseTags()
 		closetags.push_back(outputsclosetag);
 		closetags.push_back(shortmemorymapclosetag);
 		closetags.push_back(longmemorymapclosetag);
+		closetags.push_back(goldennodesclosetag);
 		closetags.push_back(linksclosetag);
 	}
 	return closetags;
@@ -273,6 +280,9 @@ std::string XML_Formatting::GetNameFromTag(std::string tag, TagType tagtype)
 
 Genome* XML_Formatting::ParseGenomeDirect(std::string content)
 {
+	bool activation = ConsoleManager::GetEnabled();
+	ConsoleManager::DeActivate();
+	ConsoleManager::Output("XML_Formatting::ParseGenomeDirect");
 	Genome* genome = NULL;
 	bool idset = false;
 	bool inputcountset = false;
@@ -300,8 +310,10 @@ Genome* XML_Formatting::ParseGenomeDirect(std::string content)
 	std::vector<GoldenNode*> goldennodes;
 	MemoryPresentNode* memorypresentnode = NULL;
 	std::vector<std::pair<int,int>> goldlinks;
+	int linecounter = 0;
 	while (std::getline(stream, line))
 	{
+		ConsoleManager::Output(std::to_string(linecounter++));
 		if (!IsTag(line, elements))
 		{
 			if (elements->size() > 0)
@@ -317,17 +329,23 @@ Genome* XML_Formatting::ParseGenomeDirect(std::string content)
 							id = n->Number;
 							idset = true;
 						}
+						
+						//delete n;
 					}
 					if (Operations::Contains(line, "<InputCount>"))
 					{
 						std::string inpcount = Operations::GetTextBetween(line, "<InputCount>", "</InputCount>");
+						ConsoleManager::Output(inpcount);
 						IntWrapper* n = new IntWrapper();
 						if (Operations::TryParse(inpcount, n))
 						{
+							ConsoleManager::Output("Input count found");
+							ConsoleManager::Output(n->Number);
 							inputcount = n->Number;
 							inputcountset = true;
 						}
-						n->~IntWrapper();
+						//delete n;
+						//n->~IntWrapper();
 					}
 					if (Operations::Contains(line, "<OutputCount>"))
 					{
@@ -338,7 +356,8 @@ Genome* XML_Formatting::ParseGenomeDirect(std::string content)
 							outputcount = n->Number;
 							outputcountset = true;
 						}
-						n->~IntWrapper();
+						//delete n;
+						//n->~IntWrapper();
 					}
 					if (Operations::Contains(line, "<STMemoryCount>"))
 					{
@@ -346,10 +365,11 @@ Genome* XML_Formatting::ParseGenomeDirect(std::string content)
 						IntWrapper* n = new IntWrapper();
 						if (Operations::TryParse(memcount, n))
 						{
-stmemcount = n->Number;
-stmemcountset = true;
+							stmemcount = n->Number;
+							stmemcountset = true;
 						}
-						n->~IntWrapper();
+						//delete n;
+						//n->~IntWrapper();
 					}
 					if (Operations::Contains(line, "<LTMemoryCount>"))
 					{
@@ -360,6 +380,7 @@ stmemcountset = true;
 							ltmemcount = n->Number;
 							ltmemcountset = true;
 						}
+						//delete n;
 					}
 					if (Operations::Contains(line, "<MemoryPresentNode>"))
 					{
@@ -371,7 +392,7 @@ stmemcountset = true;
 							//memorypresent = n->Number;
 							memorypresentset = true;
 						}
-						delete n;
+						//delete n;
 					}
 				}
 				else if (elements->top() == inputsopentag)
@@ -391,9 +412,9 @@ stmemcountset = true;
 								inputnodes.push_back(inp);
 								nodemap.insert(std::make_pair(n->Number, inp));
 							}
-							delete nn;
+							//delete nn;
 						}
-						delete n;
+						//delete n;
 					}
 				}
 				else if (elements->top() == intermediatesopentag)
@@ -414,9 +435,9 @@ stmemcountset = true;
 								intermediatenodes.push_back(node);
 								nodemap.insert(std::make_pair(n->Number, node));
 							}
-							delete d;
+							//delete d;
 						}
-						delete n;
+						//delete n;
 					}
 				}
 				else if (elements->top() == outputsopentag)
@@ -432,7 +453,7 @@ stmemcountset = true;
 							nodes.push_back(outputnode);
 							nodemap.insert(std::make_pair(_outid->Number, outputnode));
 						}
-						delete _outid;
+						//delete _outid;
 					}
 				}
 				else if (elements->top() == shortmemorymapopentag)
@@ -456,7 +477,9 @@ stmemcountset = true;
 								nodemap.insert(std::make_pair(_outputid->Number, omn));
 								nodemap.insert(std::make_pair(_inputid->Number, imn));
 							}
+							//delete _outputid;
 						}
+						//delete _inputid;
 					}
 				}
 				else if (elements->top() == longmemorymapopentag)
@@ -485,8 +508,11 @@ stmemcountset = true;
 									nodemap.insert(std::make_pair(_outputid->Number, omn));
 									nodemap.insert(std::make_pair(_inputid->Number, imn));
 								}
+								//delete _value;
 							}
+							//delete _outputid;
 						}
+						//delete _inputid;
 					}
 				}
 				else if (elements->top() == goldennodesopentag)
@@ -511,7 +537,7 @@ stmemcountset = true;
 									{
 										goldlinks.push_back(std::make_pair(ninp->Number, _id->Number));
 									}
-									delete ninp;
+									//delete ninp;
 								}
 								GoldenNode* gn = new GoldenNode(op, _id->Number);
 								if (op == CONSTANT)
@@ -522,14 +548,14 @@ stmemcountset = true;
 									{
 										gn->SetConstValue(d->Number);
 									}
-									delete d;
+									//delete d;
 								}
 								goldennodes.push_back(gn);
 								nodes.push_back(gn);
 								nodemap.insert(std::make_pair(_id->Number, gn));
 							}
 						}
-						delete _id;
+						//delete _id;
 					}
 				}
 				else if (elements->top() == linksopentag)
@@ -566,16 +592,17 @@ stmemcountset = true;
 										}
 									}
 								}
-								delete w;
+								//delete w;
 							}
-							delete d;
+							//delete d;
 						}
-						delete s;
+						//delete s;
 					}
 				}
 			}
 		}
 	}
+	ConsoleManager::SetEnabled(activation);
 	if (idset && inputcountset && outputcountset && ltmemcountset && stmemcountset && memorypresentset)
 	{
 		genome = new Genome(inputcount, outputcount, ltmemcount, stmemcount, id);

@@ -65,6 +65,9 @@ namespace NEAT_Interface
         [DllImport(dllname, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void CreateIntermediateNode(int genomeid, int inputNode, int outputNode);
 
+        [DllImport(dllname, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void Train(int genomeid, double[] input, double[] output);
+
         [DllImport(dllname,CallingConvention = CallingConvention.Cdecl)]
         internal static extern int InputCount(int genomeid);
 
@@ -79,6 +82,9 @@ namespace NEAT_Interface
 
         [DllImport(dllname, CallingConvention = CallingConvention.Cdecl)]
         internal static extern int NodeCount(int genomeid);
+
+        [DllImport(dllname, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int IntermediateNodeCount(int genomeid);
     }
 
     public static class Interface
@@ -102,7 +108,29 @@ namespace NEAT_Interface
                 return false;
             }
         }
-
+        public static void TryAction(Action action)
+        {
+            try
+            {
+                action();
+            }
+            catch(Exception err)
+            {
+                Output.GenerateOutput("Error: {0};", err.Message);
+            }
+        }
+        public static T TryFunc<T>(Func<T> function)
+        {
+            try
+            {
+                return function();
+            }
+            catch(Exception err)
+            {
+                Output.GenerateOutput("Error: {0};", err.Message);
+                return default(T);
+            }
+        }
         public static bool GenomeExists(int id)
         {
             if (DLLExistsLocally())
@@ -177,7 +205,9 @@ namespace NEAT_Interface
         {
             if (DLLExistsLocally())
             {
-                return Import.GetOutputFromGenome(genome, inputcount, inputs, outputnum);
+                Func<double> a = () => { return Import.GetOutputFromGenome(genome, inputcount, inputs, outputnum); };
+                return TryFunc(a);
+                //return TryFunc(() => {return Import.GetOutputFromGenome(genome, inputcount, inputs, outputnum); });
             }
             return -1d;
         }
@@ -194,7 +224,9 @@ namespace NEAT_Interface
         {
             if (DLLExistsLocally())
             {
-                Import.Mutate(genomeid, iterations);
+                Action a = () => { Import.Mutate(genomeid, iterations); };
+                TryAction(a);
+                //TryAction(() => { Import.Mutate(genomeid, iterations); });
             }
         }
 
@@ -202,7 +234,7 @@ namespace NEAT_Interface
         {
             if (DLLExistsLocally())
             {
-                Import.RemoveNode(genomeid, intermediateindex);
+                TryAction(() => { Import.RemoveNode(genomeid, intermediateindex); });
             }
         }
 
@@ -243,6 +275,14 @@ namespace NEAT_Interface
             if (DLLExistsLocally())
             {
                 Import.CreateIntermediateNode(genomeid, inputNode, outputNode);
+            }
+        }
+
+        public static void Train(int genomeid, double[] inputs, double[] outputs)
+        {
+            if (DLLExistsLocally())
+            {
+                Import.Train(genomeid, inputs, outputs);
             }
         }
 
@@ -287,6 +327,15 @@ namespace NEAT_Interface
             if (DLLExistsLocally())
             {
                 return Import.NodeCount(genomeid);
+            }
+            return -1;
+        }
+
+        public static int IntermediateNodeCount(int genomeid)
+        {
+            if (DLLExistsLocally())
+            {
+                return Import.IntermediateNodeCount(genomeid);
             }
             return -1;
         }

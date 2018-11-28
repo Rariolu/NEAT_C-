@@ -39,3 +39,8 @@ double InputNode::GetNodeValue(double inputs[])
 {
 	return Memorise(inputs[_inputIndex]);
 }
+
+double InputNode::GetDistance()
+{
+	return 0;
+}

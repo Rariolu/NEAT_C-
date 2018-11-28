@@ -115,14 +115,14 @@ namespace NEAT_Interface
         }
         public double[] GetOutputDynamic(params double[] inputs)
         {
-            if (inputs.Length != InputCount)
-            {
-                return new double[OutputCount];
-            }
             return GetOutput(inputs);
         }
         public double[] GetOutput(double[] inputs)
         {
+            if (inputs.Length != InputCount)
+            {
+                return new double[OutputCount];
+            }
             Interface.ResetMemory(ID);
             double[] outputarray = new double[OutputCount];
             for (int i = 0; i < OutputCount; i++)
@@ -164,6 +164,19 @@ namespace NEAT_Interface
         public int NodeCount()
         {
             return Interface.NodeCount(ID);
+        }
+
+        public int IntermediateNodeCount()
+        {
+            return Interface.IntermediateNodeCount(ID);
+        }
+        public void Train(double[] inputs, double[] outputs)
+        {
+            if (inputs.Length != InputCount || outputs.Length != OutputCount)
+            {
+                return;
+            }
+            Interface.Train(ID, inputs, outputs);
         }
     }
 }

@@ -40,3 +40,8 @@ MemoryPresentNode* MemoryPresentNode::GetMPClone()
 {
 	return (MemoryPresentNode*)GetClone();
 }
+
+double MemoryPresentNode::GetDistance()
+{
+	return 0;
+}

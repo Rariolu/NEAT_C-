@@ -9,7 +9,8 @@ enum Operator
 	SUBTRACT,
 	DIVIDE,
 	MULTIPLY,
-	CONSTANT
+	CONSTANT,
+	BINARY
 };
 
 #include "Node.h"

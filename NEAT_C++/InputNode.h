@@ -12,6 +12,7 @@ class InputNode : public Node
 		Node* GetClone();
 		InputNode* GetINClone();
 		double GetNodeValue(double inputs[]);
+		double GetDistance();
 	private:
 		int _inputIndex;
 };

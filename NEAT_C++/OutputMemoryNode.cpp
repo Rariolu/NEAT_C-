@@ -54,3 +54,8 @@ OutputMemoryNode* OutputMemoryNode::GetOMNClone()
 {
 	return (OutputMemoryNode*)GetClone();
 }
+
+double OutputMemoryNode::GetDistance()
+{
+	return maxDistance;
+}

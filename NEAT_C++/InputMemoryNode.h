@@ -13,6 +13,7 @@ class InputMemoryNode : public Node
 		OutputMemoryNode* GetOutputMemoryNode();
 		Node* GetClone();
 		InputMemoryNode* GetIMNClone();
+		double GetDistance();
 	private:
 		OutputMemoryNode* _outputMemoryNode;
 };

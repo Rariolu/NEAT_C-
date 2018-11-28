@@ -44,10 +44,10 @@ Genome::Genome(int inputcount, int outputcount, int ltmemorycount, int stmemoryc
 
 Genome::~Genome()
 {
-	for (int i = 0; i < _nodes.size(); i++)
-	{
-		delete _nodes[i];
-	}
+	//for (int i = 0; i < _nodes.size(); i++)
+	//{
+	//	delete _nodes[i];
+	//}
 }
 
 int Genome::ID()
@@ -147,7 +147,7 @@ void Genome::CreateNode(int previousNode, int nextNode)
 {
 	if (_nodes.size() > 0)
 	{
-		std::cout << "Create Node method" << std::endl;
+		//std::cout << "Create Node method" << std::endl;
 		int prevNodeIndex = previousNode % _nodes.size();
 		int nextNodeIndex = nextNode % _nodes.size();
 		if (prevNodeIndex != nextNodeIndex)
@@ -180,6 +180,7 @@ void Genome::CreateLink(int source, int destination, double weight)
 			Node::Link* link = new Node::Link(_s, _d, weight);
 			_s->AddOutput(link);
 			_d->AddInput(link);
+			//std::cout << "Created link between " << _s->GetNodeID() << " and " << _d->GetNodeID() << " with respective distances of "<<_s->GetDistance()<<", "<<_d->GetDistance() << std::endl;
 		}
 	}
 }
@@ -223,20 +224,37 @@ void Genome::RemoveLink(int source, int destination)
 
 Genome* Genome::Clone(int genomeid)
 {
+	ConsoleManager::DeActivate();
+	ConsoleManager::Output("Clone method called");
 	//std::cout << "Clone method called" << std::endl;
 	std::vector<Node*> cloneNodes;
 	//std::cout << "Begin node cloning" << std::endl;
 	for (int i = 0; i < _nodes.size(); i++)
 	{
-		Node* _clonenode = _nodes[i]->GetClone();
-		std::vector<Node::Link*> _outputs = _nodes[i]->GetOutputs();
-		for (int j = 0; j < _outputs.size(); j++)
+		
+		if (_nodes[i])
 		{
-			_outputs[j]->GetClone();
+			Node* _clonenode = _nodes[i]->GetClone();
+			//ConsoleManager::Output("Node cloned");
+			std::vector<Node::Link*> _outputs = _nodes[i]->GetOutputs();
+			for (int j = 0; j < _outputs.size(); j++)
+			{
+				if (_outputs[j])
+				{
+					_outputs[j]->GetClone();
+				}
+				else
+				{
+					//ConsoleManager::Output("Output was null :/");
+				}
+			}
+			//ConsoleManager::Output("Outputs cloned");
+			cloneNodes.push_back(_clonenode);
 		}
-		cloneNodes.push_back(_clonenode);
+		ConsoleManager::DeActivate();
 	}
 	std::vector<InputNode*> cloneInputs;
+	ConsoleManager::Output("Input node cloning");
 	//std::cout << "Input node cloning" << std::endl;
 	for (int i = 0; i < _inputnodes.size(); i++)
 	{
@@ -255,24 +273,28 @@ Genome* Genome::Clone(int genomeid)
 		cloneIntermediates.push_back(_intermediatenodes[i]->GetClone());
 	}
 	std::vector<InputMemoryNode*> cloneSTINPMems;
+	ConsoleManager::Output("STINPMEM node cloning");
 	//std::cout << "STINPMEM node cloning" << std::endl;
 	for (int i = 0; i < _stinputmemorynodes.size(); i++)
 	{
 		cloneSTINPMems.push_back(_stinputmemorynodes[i]->GetIMNClone());
 	}
 	std::vector<OutputMemoryNode*> cloneSTOUTMems;
+	ConsoleManager::Output("STOUTMEM node cloning");
 	//std::cout << "STOUTMEM node cloning" << std::endl;
 	for (int i = 0; i < _stoutputmemorynodes.size(); i++)
 	{
 		cloneSTOUTMems.push_back(_stoutputmemorynodes[i]->GetOMNClone());
 	}
 	std::vector<InputMemoryNode*> cloneLTINPMems;
+	ConsoleManager::Output("LTINPMEM node cloning");
 	//std::cout << "LTINPMEM node cloning" << std::endl;
 	for (int i = 0; i < _ltinputmemorynodes.size(); i++)
 	{
 		cloneLTINPMems.push_back(_ltinputmemorynodes[i]->GetIMNClone());
 	}
 	std::vector<OutputMemoryNode*> cloneLTOUTMems;
+	ConsoleManager::Output("LTOUTMEM node cloning");
 	//std::cout << "LTOUTMEM node cloning" << std::endl;
 	for (int i = 0; i < _ltoutputmemorynodes.size(); i++)
 	{
@@ -290,7 +312,21 @@ Genome* Genome::Clone(int genomeid)
 	//std::cout << "Genome created" << std::endl;
 	genome->SetNodes(cloneNodes, cloneInputs, cloneOutputs, cloneIntermediates, cloneLTINPMems, cloneLTOUTMems, cloneSTINPMems, cloneSTOUTMems, cloneGoldenNodes, cloneMPNode);
 	//std::cout << "Nodes set" << std::endl;
+	ConsoleManager::DeActivate();
 	return genome;
+}
+
+void Genome::Train(double inputs[], double outputs[])
+{
+	ResetMemory();
+	for (int i = 0; i < GetOutputCount(); i++)
+	{
+		_outputnodes[i]->GetNodeValue(inputs);
+	}
+	for (int i = 0; i < GetOutputCount(); i++)
+	{
+		_outputnodes[i]->Train(inputs, outputs[i]);
+	}
 }
 
 int Genome::GetInputCount()
@@ -328,11 +364,12 @@ void Genome::AddNode(Node* prevnode, Node* nextnode)
 	if (prevnode->GetDistance() != nextnode->GetDistance())
 	{
 		Node* smallerDistance = prevnode->GetDistance() < nextnode->GetDistance() ? prevnode : nextnode;
-		Node* largerDistance = prevnode->GetDistance() > nextnode->GetDistance() ? nextnode : prevnode;
+		Node* largerDistance = prevnode->GetDistance() < nextnode->GetDistance() ? nextnode : prevnode;
 		Node* n = new Node();
-		n->RandomiseDistance(smallerDistance->GetDistance(), largerDistance->GetDistance());
+		n->RandomiseDistance(smallerDistance->GetDistance()+1, largerDistance->GetDistance());
 		n->AddInput(smallerDistance);
-		n->AddOutput(largerDistance);
+		//n->AddOutput(largerDistance);
+		//std::cout << "Created node with input of " << smallerDistance->GetNodeID() << ", output of " << largerDistance->GetNodeID() << " and distance of " << n->GetDistance() << std::endl;
 		AddNode(n);
 	}
 }
@@ -345,15 +382,33 @@ void Genome::AddNode(Node* node)
 
 void Genome::RemoveNode(Node* node)
 {
+	bool activation = ConsoleManager::GetEnabled();
+	ConsoleManager::DeActivate();
 	node->DeleteLinks();
 	std::vector<Node*>::iterator inti = std::find(_intermediatenodes.begin(), _intermediatenodes.end(), node);
+	ConsoleManager::Output("Intermediate Count: "+std::to_string(GetIntermediateNodeCount()));
 	if (inti != _intermediatenodes.end())
 	{
-		_intermediatenodes.erase(inti);
+		inti = _intermediatenodes.erase(inti);
 	}
+	else
+	{
+		ConsoleManager::Output("Intermediate node not found in vector.");
+		//std::cout << "Intermediate node not found in vector" << std::endl;
+	}
+	ConsoleManager::Output("Intermediate Count: "+std::to_string(GetIntermediateNodeCount()));
 	std::vector<Node*>::iterator ni = std::find(_nodes.begin(), _nodes.end(), node);
 	if (ni != _nodes.end())
 	{
-		_nodes.erase(ni);
+		ni = _nodes.erase(ni);
 	}
+	else
+	{
+		ConsoleManager::Output("Node not found in vector");
+		//std::cout << "Node not found in vector" << std::endl;
+	}
+	ConsoleManager::SetEnabled(activation);
+	//delete node;
+	//node = NULL;
+	//return node;
 }

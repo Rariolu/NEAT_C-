@@ -30,12 +30,12 @@ int CloneGenomeWithID(int genomeid, int newgenomeid)
 	return GenomeManager::CloneGenome(genomeid, newgenomeid);
 }
 
-extern "C" void SaveGenome(int id, char* filepath)
+void SaveGenome(int id, std::string filepath)//char* filepath)
 {
 	Genome* genome = GenomeManager::GetGenome(id);
 	if (genome)
 	{
-		XML_Formatting::SaveGenome(genome, std::string(filepath));
+		XML_Formatting::SaveGenome(genome, filepath);// std::string(filepath));
 	}
 }
 
@@ -85,46 +85,47 @@ void Mutate(int genomeid, int iterations)
 		{
 			for (int i = 0; i < abs(iterations); i++)
 			{
-				std::cout << "Mutation iteration started" << std::endl;
+				//std::cout << "Mutation iteration started" << std::endl;
 				double r = Operations::randd->NextDouble();
 				const double options = 6;
 				int s = Operations::randd->Next(g->GetNodeCount());
 				int d = Operations::randd->Next(g->GetNodeCount());
 				double w = Operations::randd->NextDouble(-25, 25);
-				if (r <= 1 / options)
+				int optionIterator = 1;
+				if (r <= optionIterator++ / options)
 					//Remove Node
 				{
-					std::cout << "Node removal" << std::endl;
+					//std::cout << "Node removal" << std::endl;
 					int n = Operations::randd->Next(g->GetIntermediateNodeCount());
 					g->RemoveNode(n);
 				}
-				else if (r <= 2 / options)
+				else if (r <= optionIterator++ / options)
 					//Create Node
 				{
-					std::cout << "Node creation" << std::endl;
+					//std::cout << "Node creation" << std::endl;
 					g->CreateNode(s, d);
 				}
-				else if (r <= 3 / options)
+				else if (r <= optionIterator++ / options)
 					//Create Link
 				{
-					std::cout << "Link creation" << std::endl;
+					//std::cout << "Link creation" << std::endl;
 					g->CreateLink(s, d, w);
 				}
-				else if (r <= 4 / options)
+				else if (r <= optionIterator++ / options)
 					//Alter Link Weight
 				{
-					std::cout << "Link weight alteration" << std::endl;
+					//std::cout << "Link weight alteration" << std::endl;
 					g->AlterLinkWeight(s, d, w);
 				}
-				else if (r <= 5 / options)
+				else if (r <= optionIterator++ / options)
 					//Remove Link
 				{
-					std::cout << "Link removal" << std::endl;
+					//std::cout << "Link removal" << std::endl;
 					g->RemoveLink(s, d);
 				}
-				else if (r <= 6 / options)
+				else if (r <= optionIterator++ / options)
 				{
-					std::cout << "Intermediate Node creation" << std::endl;
+					//std::cout << "Intermediate Node creation" << std::endl;
 					int inp = Operations::randd->Next(g->GetInputCount());
 					int out = Operations::randd->Next(g->GetOutputCount());
 					g->CreateIntermediateNode(inp, out);
@@ -192,6 +193,15 @@ void CreateIntermediateNode(int genomeid, int inputNode, int outputNode)
 	}
 }
 
+void Train(int genomeid, double input[], double output[])
+{
+	Genome* g = GenomeManager::GetGenome(genomeid);
+	if (g)
+	{
+		g->Train(input, output);
+	}
+}
+
 int InputCount(int genomeid)
 {
 	Genome* g = GenomeManager::GetGenome(genomeid);
@@ -238,6 +248,16 @@ int NodeCount(int genomeid)
 	if (g)
 	{
 		return g->GetNodeCount();
+	}
+	return -1;
+}
+
+int IntermediateNodeCount(int genomeid)
+{
+	Genome* g = GenomeManager::GetGenome(genomeid);
+	if (g)
+	{
+		return g->GetIntermediateNodeCount();
 	}
 	return -1;
 }

@@ -12,6 +12,7 @@ class MemoryPresentNode : public Node
 		double GetNodeValue(double inputs[]);
 		Node* GetClone();
 		MemoryPresentNode* GetMPClone();
+		double GetDistance();
 	private:
 		bool firstIteration = true;
 		bool _stmNodesPresent;

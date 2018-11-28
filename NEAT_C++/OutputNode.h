@@ -10,6 +10,8 @@ class OutputNode : public Node
 		~OutputNode();
 		Node* GetClone();
 		OutputNode* GetONNode();
+		double GetDistance();
+		void Train(double inputs[], double output);
 };
 
 #endif

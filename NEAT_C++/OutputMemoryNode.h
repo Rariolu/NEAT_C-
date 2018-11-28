@@ -14,6 +14,7 @@ class OutputMemoryNode : public Node
 		void SetValue(double val);
 		Node* GetClone();
 		OutputMemoryNode* GetOMNClone();
+		double GetDistance();
 	private:
 		bool _longterm = false;
 		double previousIterationOutput = 0;

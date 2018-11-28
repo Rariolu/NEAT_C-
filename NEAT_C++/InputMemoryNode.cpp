@@ -38,3 +38,7 @@ InputMemoryNode* InputMemoryNode::GetIMNClone()
 {
 	return (InputMemoryNode*)GetClone();
 }
+double InputMemoryNode::GetDistance()
+{
+	return 0;
+}

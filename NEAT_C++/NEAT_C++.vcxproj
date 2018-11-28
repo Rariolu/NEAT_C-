@@ -110,6 +110,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ConsoleManager.h" />
     <ClInclude Include="CSRand.h" />
     <ClInclude Include="DoubleWrapper.h" />
     <ClInclude Include="ExternalInterface.h" />
@@ -128,6 +129,7 @@
     <ClInclude Include="XML_Formatting.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ConsoleManager.cpp" />
     <ClCompile Include="CSRand.cpp" />
     <ClCompile Include="ExternalInterface.cpp" />
     <ClCompile Include="Genome.cpp" />

@@ -37,6 +37,7 @@ class Genome
 		void AlterLinkWeight(int source, int destination, double weight);
 		void RemoveLink(int source, int destination);
 		Genome* Clone(int genomeid);
+		void Train(double inputs[], double outputs[]);
 
 		int GetInputCount();
 		int GetOutputCount();
